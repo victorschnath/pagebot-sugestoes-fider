@@ -17,6 +17,7 @@ export const Header = (props: HeaderProps) => {
   const [isRSSModalOpen, setIsRSSModalOpen] = useState(false)
 
   const pathname = typeof window !== "undefined" ? window.location.pathname : "/"
+  const isPagebotContext = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("id")
   const isRoadmapActive = pathname === "/roadmap"
   const isFeedbackActive = !isRoadmapActive
 
@@ -77,13 +78,15 @@ export const Header = (props: HeaderProps) => {
                   </button>
                 )}
                 <ThemeSwitcher />
-                <Button variant="primary" size="default" onClick={handleSignInClick}>
-                  <HStack spacing={1} className="flex-items-center">
-                    <span>
-                      <Trans id="action.signin">Sign in</Trans>
-                    </span>
-                  </HStack>
-                </Button>
+                {!isPagebotContext && (
+                  <Button variant="primary" size="default" onClick={handleSignInClick}>
+                    <HStack spacing={1} className="flex-items-center">
+                      <span>
+                        <Trans id="action.signin">Sign in</Trans>
+                      </span>
+                    </HStack>
+                  </Button>
+                )}
               </HStack>
             )}
           </div>
