@@ -34,6 +34,13 @@ func routes(r *web.Engine) *web.Engine {
 		return next(c)
 	})
 
+	pagebotExtensionAssets := r.Group()
+	{
+		pagebotExtensionAssets.Use(middlewares.CORS())
+		pagebotExtensionAssets.Static("/action.html", "static/pagebot-action.html")
+		pagebotExtensionAssets.Static("/suggestions-icon.svg", "static/suggestions-icon.svg")
+	}
+
 	r.Use(middlewares.Secure())
 	r.Use(middlewares.Compress())
 
@@ -123,6 +130,7 @@ func routes(r *web.Engine) *web.Engine {
 	r.Get("/access-denied", handlers.AccessDeniedPage())
 	r.Get("/signin/verify", handlers.VerifySignInKey(enum.EmailVerificationKindSignIn))
 	r.Get("/invite/verify", handlers.VerifySignInKey(enum.EmailVerificationKindUserInvitation))
+	r.Get("/pagebot/sso", handlers.PagebotSSO())
 	r.Post("/_api/signin/complete", handlers.CompleteSignInProfile())
 	r.Post("/_api/signin", handlers.SignInByEmail())
 	r.Post("/_api/signin/newuser", handlers.SignInByEmailWithName())
