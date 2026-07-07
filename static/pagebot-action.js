@@ -33,7 +33,7 @@
           icon_url: iconUrl,
           text: "Sugest\u00f5es",
           callback: function () {
-            wlExtension.openPage({ url: appUrl.href });
+            openSuggestionsPage();
           }
         }
       ]
@@ -50,6 +50,50 @@
     if (statusBox) {
       statusBox.textContent = message;
     }
+  }
+
+  function openSuggestionsPage() {
+    Promise.resolve(wlExtension.getInfoUser())
+      .then(function (user) {
+        var userId = pickFirst(user, ["userId", "id", "usuarioId"]);
+        var systemKey = pickFirst(user, ["systemKey", "systemId", "sistema"]);
+
+        if (!userId || !systemKey) {
+          wlExtension.openPage({ url: appUrl.href });
+          return;
+        }
+
+        var ssoUrl = new URL("/pagebot/sso", window.location.origin);
+        ssoUrl.searchParams.set("userId", userId);
+        ssoUrl.searchParams.set("systemKey", systemKey);
+        ssoUrl.searchParams.set("redirect", appUrl.pathname + appUrl.search);
+
+        var name = pickFirst(user, ["name", "nome", "login", "email"]);
+        if (name) {
+          ssoUrl.searchParams.set("name", name);
+        }
+
+        wlExtension.openPage({ url: ssoUrl.href });
+      })
+      .catch(function (error) {
+        console.warn("[PagebotSuggestions] SSO indisponivel, abrindo sem sessao", error);
+        wlExtension.openPage({ url: appUrl.href });
+      });
+  }
+
+  function pickFirst(source, keys) {
+    if (!source || typeof source !== "object") {
+      return "";
+    }
+
+    for (var i = 0; i < keys.length; i += 1) {
+      var value = source[keys[i]];
+      if (value !== undefined && value !== null && String(value).trim() !== "") {
+        return String(value).trim();
+      }
+    }
+
+    return "";
   }
 
   function createWlExtensionBridge() {
