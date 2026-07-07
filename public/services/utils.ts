@@ -92,9 +92,9 @@ export const timeAgo = (date: string | Date): number => {
 
 export const isCookieEnabled = (): boolean => {
   try {
-    document.cookie = "cookietest=1"
+    document.cookie = "cookietest=1; SameSite=None; Secure"
     const ret = document.cookie.indexOf("cookietest=") !== -1
-    document.cookie = "cookietest=1; expires=Thu, 01-Jan-1970 00:00:01 GMT"
+    document.cookie = "cookietest=1; expires=Thu, 01-Jan-1970 00:00:01 GMT; SameSite=None; Secure"
     return ret
   } catch (e) {
     return false
