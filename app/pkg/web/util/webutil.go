@@ -51,6 +51,7 @@ func SetSignUpAuthCookie(ctx *web.Context, user *entity.User) {
 		Path:     "/",
 		Expires:  time.Now().Add(5 * time.Minute),
 		Secure:   ctx.Request.IsSecure,
+		SameSite: http.SameSiteNoneMode,
 	})
 }
 
@@ -66,6 +67,7 @@ func GetSignUpAuthCookie(ctx *web.Context) string {
 			MaxAge:   -1,
 			Expires:  time.Now().Add(-100 * time.Hour),
 			Secure:   ctx.Request.IsSecure,
+			SameSite: http.SameSiteNoneMode,
 		})
 		return cookie.Value
 	}
