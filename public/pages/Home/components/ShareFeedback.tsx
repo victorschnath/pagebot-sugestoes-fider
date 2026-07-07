@@ -35,6 +35,7 @@ interface ShareFeedbackProps {
 export const ShareFeedback: React.FC<ShareFeedbackProps> = (props) => {
   const fider = useFider()
   const { isOpen, onClose } = props
+  const isPagebotContext = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("id")
 
   const getTagsCachedValue = (): Tag[] => {
     if (!canEditTags) {
@@ -270,20 +271,26 @@ export const ShareFeedback: React.FC<ShareFeedbackProps> = (props) => {
             </Form>
           </div>
         </div>
-        {/* For unauthenticated users, always show the sign-in control */}
+        {/* Pagebot users are signed in by the extension bootstrap. */}
         {!fider.session.isAuthenticated ? (
           <div className="c-share-feedback__content">
             <div className="c-share-feedback-signin">
-              <h2 className="text-title text-center mb-4">
-                <Trans id="newpost.modal.submit">Submit your idea</Trans>
-              </h2>
-              <SignInControl
-                onSubmit={onSubmitFeedback}
-                onCodeVerified={onCodeVerified}
-                signInButtonText={i18n._({ id: "signin.message.email", message: "Continue with Email" })}
-                useEmail={true}
-                redirectTo={fider.settings.baseURL}
-              />
+              {isPagebotContext ? (
+                <div className="text-center text-muted">Conectando sua sessao pela Pagebot...</div>
+              ) : (
+                <>
+                  <h2 className="text-title text-center mb-4">
+                    <Trans id="newpost.modal.submit">Submit your idea</Trans>
+                  </h2>
+                  <SignInControl
+                    onSubmit={onSubmitFeedback}
+                    onCodeVerified={onCodeVerified}
+                    signInButtonText={i18n._({ id: "signin.message.email", message: "Continue with Email" })}
+                    useEmail={true}
+                    redirectTo={fider.settings.baseURL}
+                  />
+                </>
+              )}
             </div>
           </div>
         ) : (
@@ -300,7 +307,7 @@ export const ShareFeedback: React.FC<ShareFeedbackProps> = (props) => {
             </div>
           )
         )}
-        {!fider.session.isAuthenticated ? <LegalFooter /> : null}
+        {!fider.session.isAuthenticated && !isPagebotContext ? <LegalFooter /> : null}
       </Modal.Content>
     </Modal.Window>
   )
