@@ -31,6 +31,7 @@
   <script id="server-data" type="application/json">
     {{template "server-data" .}}
   </script>
+  <script src="{{ .public.settings.assetsURL }}/static/assets/pagebot-sso-bootstrap.js?v=1"></script>
 
   {{ if ne .public.settings.googleAnalytics "" }}
   <script type="text/javascript" nonce="{{ .public.contextID }}">
