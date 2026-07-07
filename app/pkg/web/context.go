@@ -162,6 +162,7 @@ func (c *Context) Tenant() *entity.Tenant {
 // SetTenant update HTTP context with current tenant
 func (c *Context) SetTenant(tenant *entity.Tenant) {
 	if tenant != nil {
+		tenant.Locale = env.Config.Locale
 		c.Set(log.PropertyKeyTenantID, tenant.ID)
 		c.Set(app.LocaleCtxKey, tenant.Locale)
 	}
